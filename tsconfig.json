@@ -1,0 +1,17 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "pretty": true,
+    "target": "es6",
+    "outDir": "./dist",
+    "baseUrl": "./app"
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.json"
+  ],
+  "exclude": ["node_modules"]
+}
