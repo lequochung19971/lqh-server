@@ -30,6 +30,7 @@ export class EmployeesController {
       modifiedBy: null,
       description: 'Create new employee',
     };
+    console.log(req.body);
 
     if (utilities.hasEnoughParams<Employee>(req.body, this.propertiesForCreating())) {
       const password = this.passwordHasherService.createNewHashingPassword(req.body.password);
@@ -158,11 +159,11 @@ export class EmployeesController {
   }
 
   protected propertiesForCreating(): string[] {
-    return ['dob', 'age', 'fullName', 'email', 'phone', 'gender'];
+    return ['firstName', 'lastName','dob', 'age',  'email', 'phone', 'gender', 'department', 'position', 'addressInfo', 'idCardInfo'];
   }
 
   protected propertiesForUpdating(): string[] {
-    return ['dob', 'age', 'fullName', 'email', 'phone', 'gender'];
+    return ['firstName', 'lastName','dob', 'age', 'email', 'phone', 'gender'];
   }
 
   protected convertToDataFE(data: any): EmployeeFE | EmployeeFE[] {

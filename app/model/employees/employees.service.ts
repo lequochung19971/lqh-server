@@ -4,7 +4,9 @@ import { getUUID } from '../../shared/services/utilities.service';
 
 export class EmployeesSerivce {
   async createEmployee(query: Employee): Promise<any> {
+    // console.log(query.idCardInfo.createPlace[0]);
     const model = new employeesSchema({...query, _id: getUUID()});
+    console.log(model);
     return model.save();
   }
 

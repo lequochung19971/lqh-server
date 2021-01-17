@@ -2,12 +2,20 @@
   "compileOnSave": true,
   "compilerOptions": {
     "resolveJsonModule": true,
+    "esModuleInterop": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "pretty": true,
     "target": "es6",
     "outDir": "./dist",
-    "baseUrl": "./app"
+    "baseUrl": "./app",
+  },
+  "paths": {
+    "@controllers/*": ["controllers/*"],
+    "@model/*": ["model/*"],
+    "@providers/*": ["providers/*"],
+    "@routes/*": ["routes/*"],
+    "@shared/*": ["shared/*"],
   },
   "include": [
     "app/**/*.ts",

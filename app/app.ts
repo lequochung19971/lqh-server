@@ -1,8 +1,8 @@
-import * as express from 'express';
 import { Mongoose } from './model/mongoose';
 import { json, urlencoded } from 'body-parser';
 import { EmployeesRoutes } from './routes/employees.route';
 import { CommonRoutes } from './routes/common.route';
+import express from 'express';
 
 class App {
   private app: express.Application;

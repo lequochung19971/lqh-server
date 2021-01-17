@@ -1,28 +1,25 @@
 import { Gender } from '../enum/gender.enum';
 import { Departments } from '../enum/departments.enum';
+import { AddressModel } from './address.model';
+import { IDCard } from './id-card.model';
+import { BaseModel } from './base.model';
 
-export class EmployeeFE {
-  _id?: string;
+export class EmployeeFE extends BaseModel{
+  _id: string;
+  firstName: string;
+  lastName: string;
   dob: string;
-  age: number;
-  fullName: string;
+  age: string;
   email: string;
-  phone: number;
+  phone: string;
   department: Departments;
+  position: string;
   gender: Gender;
-  avatar: string;
+  addressInfo: AddressModel;
+  idCardInfo: IDCard;
+  avatar?: string;
 
   constructor(props?: EmployeeFE) {
-    if (props) {
-      this._id = props._id;
-      this.dob = props.dob;
-      this.age = props.age;
-      this.fullName = props.fullName;
-      this.email = props.email;
-      this.phone = props.phone;
-      this.department = props.department;
-      this.gender = props.gender;
-      this.avatar = props.avatar;
-    }
+    super(props);
   }
 }
