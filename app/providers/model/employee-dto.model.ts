@@ -1,10 +1,11 @@
 import { Gender } from '../enum/gender.enum';
 import { Departments } from '../enum/departments.enum';
 import { AddressModel } from './address.model';
-import { IDCard } from './id-card.model';
+import { IDCardModel } from './id-card.model';
 import { BaseModel } from './base.model';
+import { Employee } from './employee.model';
 
-export class EmployeeFE extends BaseModel{
+export class EmployeeDTO extends BaseModel {
   _id: string;
   firstName: string;
   lastName: string;
@@ -16,10 +17,14 @@ export class EmployeeFE extends BaseModel{
   position: string;
   gender: Gender;
   addressInfo: AddressModel;
-  idCardInfo: IDCard;
+  idCardInfo: IDCardModel;
   avatar?: string;
 
-  constructor(props?: EmployeeFE) {
+  constructor(props?: EmployeeDTO) {
     super(props);
+  }
+
+  fromEmloyee(employee: Employee): void {
+    this.mappingProperties(employee);
   }
 }

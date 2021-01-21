@@ -9,7 +9,7 @@ import { LoggerService } from '../../shared/services/logger.service';
 import { SortType } from '../../providers/enum/sort-type.enum';
 import { PasswordHasherService } from '../../shared/services/password-hasher.service';
 import * as utilities from '../../shared/services/utilities.service';
-import { EmployeeFE } from '../../providers/model/employee-FE.model';
+import { EmployeeDTO } from '../../providers/model/employee-dto.model';
 
 export class EmployeesController {
   protected employeeService: EmployeesSerivce;
@@ -30,12 +30,12 @@ export class EmployeesController {
       modifiedBy: null,
       description: 'Create new employee',
     };
-    console.log(req.body);
 
-    if (utilities.hasEnoughParams<Employee>(req.body, this.propertiesForCreating())) {
+    if (utilities.hasEnoughParams<Employee>(req.body, this.getPropertiesForCreating())) {
       const password = this.passwordHasherService.createNewHashingPassword(req.body.password);
       const body = { ...req.body, modificationNote, password } as Employee;
-      const employee: Employee = new Employee(body);
+      const employee: Employee = new Employee();
+      employee.fromEmloyeeDTO(body)
 
       this.employeeService
         .createEmployee(employee)
@@ -60,7 +60,7 @@ export class EmployeesController {
       description: 'Update employee',
     };
 
-    if (req.params.id && utilities.hasEnoughParams<Employee>(req.body, this.propertiesForCreating())) {
+    if (req.params.id && utilities.hasEnoughParams<Employee>(req.body, this.getPropertiesForCreating())) {
       const data = req.body as Employee;
       const employee: Employee = new Employee(data);
       
@@ -158,7 +158,7 @@ export class EmployeesController {
     return query;
   }
 
-  protected propertiesForCreating(): string[] {
+  protected getPropertiesForCreating(): string[] {
     return ['firstName', 'lastName','dob', 'age',  'email', 'phone', 'gender', 'department', 'position', 'addressInfo', 'idCardInfo'];
   }
 
@@ -166,11 +166,11 @@ export class EmployeesController {
     return ['firstName', 'lastName','dob', 'age', 'email', 'phone', 'gender'];
   }
 
-  protected convertToDataFE(data: any): EmployeeFE | EmployeeFE[] {
+  protected convertToDataFE(data: any): EmployeeDTO | EmployeeDTO[] {
     if (data && (Array.isArray(data) || data.length)) {
-      return data.map(d => new EmployeeFE(d));
+      return data.map(d => new EmployeeDTO(d));
     }
 
-    return new EmployeeFE(data)
+    return new EmployeeDTO(data)
   }
 }

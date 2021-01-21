@@ -2,11 +2,11 @@ import { Dayjs } from "dayjs";
 import { Address } from "./address.model";
 import { BaseModel } from "./base.model";
 
-export class IDCard extends BaseModel {
+export class IDCardModel extends BaseModel {
   idNumber: string;
   createDate: Dayjs;
   createPlace: Address;
-  constructor(props?: IDCard) {
+  constructor(props?: IDCardModel) {
     super(props)
   }
 }

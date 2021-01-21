@@ -6,11 +6,10 @@ export class BaseModel {
   constructor(props?:BaseModel) {
     if (props) {
       this.modificationNote = props.modificationNote;
-      this.mappingProperties(props);
     }
   }
 
-  private mappingProperties?(props: any) {
+  public mappingProperties?(props: any) {
     Object.assign(this, props);
   }
 }

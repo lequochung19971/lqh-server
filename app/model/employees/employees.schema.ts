@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { ModificationNoteSchema } from '../../providers/schema/modification-note.schema';
+import { modificationNoteSchema } from '../../providers/schema/modification-note.schema';
 
 const employeesSchema: Schema = new Schema({
   _id: {
@@ -19,7 +19,7 @@ const employeesSchema: Schema = new Schema({
     required: true,
   },
   age: {
-    type: Number,
+    type: String,
     required: false,
   },
   email: {
@@ -57,7 +57,7 @@ const employeesSchema: Schema = new Schema({
   avatar: {
     type: String
   },
-  modificationNote: [ModificationNoteSchema],
+  modificationNote: [modificationNoteSchema],
 });
 
 export default model('employees', employeesSchema);

@@ -5,8 +5,7 @@ export function getUUID() {
 }
 
 export function hasEnoughParams<T>(data: T | any, requiredParams: string[]): boolean {
-  return true;
-  if (!requiredParams || requiredParams.length === 0 || !data) { return false; }
+  if (!requiredParams?.length || !data) { return false; }
 
   return requiredParams.every(param => data[param]);
 }
