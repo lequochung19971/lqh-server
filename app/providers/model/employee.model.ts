@@ -1,32 +1,64 @@
-import { Gender } from '../enum/gender.enum';
-import { Departments } from '../enum/departments.enum';
 import { BaseModel } from './base.model';
-import { IPasswordHashing } from '../../providers/interface/password-hashing.interface';
-import { AddressModel } from './address.model';
+import { DepartmentModel } from './department.model';
+import { PositionModel } from './position.model';
+import { Gender } from '../enum/gender.enum';
+import { AddressesModel } from './addresses.model';
 import { IDCardModel } from './id-card.model';
-import { EmployeeDTO } from './employee-dto.model';
+import { AutoMap } from '@automapper/classes';
+import { IModificationNote } from '../interface/modification-note.interface';
+import { RequiredParams } from '../../shared/services/utilities.service';
+import { IPasswordHashing } from '../interface/password-hashing.interface';
 
-export class Employee extends BaseModel{
-  _id?: string;
+export class EmployeeModel extends BaseModel {
+  modificationNote?: IModificationNote[];
+  
+  @AutoMap()
+  _id: string;
+
+  @RequiredParams()
+  @AutoMap()
   firstName: string;
+
+  @RequiredParams()
+  @AutoMap()
   lastName: string;
+  
+  @RequiredParams()
+  @AutoMap()
   dob: string;
+  
+  @RequiredParams()
+  @AutoMap()
   age: string;
+  
+  @RequiredParams()
+  @AutoMap()
   email: string;
+  
+  @RequiredParams()
+  @AutoMap()
   phone: string;
-  department: Departments;
-  position: string;
+  
+  @RequiredParams()
+  @AutoMap(() => DepartmentModel)
+  department: DepartmentModel;
+  
+  @RequiredParams()
+  @AutoMap(() => PositionModel)
+  position: PositionModel;
+  
+  @RequiredParams()
+  @AutoMap()
   gender: Gender;
-  addressInfo: AddressModel;
+
+  @RequiredParams()
+  @AutoMap(() => AddressesModel)
+  addressInfo: AddressesModel;
+
+  @RequiredParams()
+  @AutoMap(() => IDCardModel)
   idCardInfo: IDCardModel;
-  avatar?: string;
-  password: IPasswordHashing;
 
-  constructor(props?: Employee) {
-    super(props);
-  }
-
-  fromEmloyeeDTO(employeeDTO: any) {
-    this.mappingProperties(employeeDTO);
-  }
+  @AutoMap()
+  password: IPasswordHashing
 }

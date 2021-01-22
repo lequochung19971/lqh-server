@@ -1,6 +1,8 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "module": "commonjs",
@@ -9,13 +11,6 @@
     "target": "es6",
     "outDir": "./dist",
     "baseUrl": "./app",
-  },
-  "paths": {
-    "@controllers/*": ["controllers/*"],
-    "@model/*": ["model/*"],
-    "@providers/*": ["providers/*"],
-    "@routes/*": ["routes/*"],
-    "@shared/*": ["shared/*"],
   },
   "include": [
     "app/**/*.ts",

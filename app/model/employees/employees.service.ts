@@ -1,15 +1,12 @@
-import employeesSchema from "./employees.schema";
-import { Employee } from '../../providers/model/employee.model';
-import { getUUID } from '../../shared/services/utilities.service';
-
+import employeesSchema from './employees.schema';
+import { EmployeeModel } from '../../providers/model/employee.model';
 export class EmployeesSerivce {
-  async createEmployee(query: Employee): Promise<any> {
-    console.log(query);
-    const model = new employeesSchema({...query, _id: getUUID()});
+  async createEmployee(query: EmployeeModel): Promise<any> {
+    const model = new employeesSchema(query);
     return model.save();
   }
 
-  async updateEmployee(params: Employee): Promise<any> {
+  async updateEmployee(params: EmployeeModel): Promise<any> {
     const query = { _id: params._id };
     const options = { new: true, upsert: true, overwrite: false };
     return employeesSchema.findOneAndUpdate(query, params, options).exec();
@@ -19,13 +16,12 @@ export class EmployeesSerivce {
     return employeesSchema.find({}, null, query).exec();
   }
 
-  async filterEmployee(condition: any, fields: string | string[] | any): Promise<any> {
+  async filterEmployee(condition: any, fields?: string | string[] | any): Promise<any> {
     return employeesSchema.findOne(condition, fields).exec();
   }
 
   async deleteEmployee(_id: string): Promise<any> {
     const query = { _id };
-    console.log(query)
     employeesSchema.deleteOne(query).exec();
   }
 
@@ -33,11 +29,11 @@ export class EmployeesSerivce {
     return new Promise((resolve, rejects) => {
       employeesSchema.estimatedDocumentCount(query, (err, data) => {
         if (err) {
-          rejects(err)
+          rejects(err);
         } else {
           resolve(data);
         }
       });
-    })
+    });
   }
 }

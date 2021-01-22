@@ -9,3 +9,10 @@ export function hasEnoughParams<T>(data: T | any, requiredParams: string[]): boo
 
   return requiredParams.every(param => data[param]);
 }
+
+export function RequiredParams() {
+  return function (target: any, propertyKey: string) {
+    target.constructor.propertyKeys = target.constructor.propertyKeys ?? [];
+    target.constructor.propertyKeys.push(propertyKey)
+  }
+}

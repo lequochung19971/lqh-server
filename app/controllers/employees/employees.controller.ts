@@ -1,15 +1,17 @@
 import { Request, Response } from 'express';
+import * as _ from 'lodash';
 import { EmployeesSerivce } from '../../model/employees/employees.service';
-import { Employee } from '../../providers/model/employee.model';
+import { EmployeeModel } from '../../providers/model/employee.model';
 import { IModificationNote } from '../../providers/interface/modification-note.interface';
 import { ResponseMessageService } from '../../shared/services/response-message.service';
 import { IResponseMessage } from '../../providers/interface/response-message.interface';
-import * as _ from 'lodash';
 import { LoggerService } from '../../shared/services/logger.service';
 import { SortType } from '../../providers/enum/sort-type.enum';
 import { PasswordHasherService } from '../../shared/services/password-hasher.service';
 import * as utilities from '../../shared/services/utilities.service';
-import { EmployeeDTO } from '../../providers/model/employee-dto.model';
+import { EmployeeDTO } from '../../providers/dto/employee-dto.model';
+import { employeeMapper } from '../../providers/mapper/employee.mapper';
+import { getUUID } from '../../shared/services/utilities.service';
 
 export class EmployeesController {
   protected employeeService: EmployeesSerivce;
@@ -31,16 +33,24 @@ export class EmployeesController {
       description: 'Create new employee',
     };
 
-    if (utilities.hasEnoughParams<Employee>(req.body, this.getPropertiesForCreating())) {
-      const password = this.passwordHasherService.createNewHashingPassword(req.body.password);
-      const body = { ...req.body, modificationNote, password } as Employee;
-      const employee: Employee = new Employee();
-      employee.fromEmloyeeDTO(body)
+    const employeeModel = employeeMapper.map(req.body, EmployeeModel, EmployeeDTO, {
+      afterMap(_s, d) {
+        d.modificationNote = [];
+        d.modificationNote.push(modificationNote)
+      },
+    });
 
+    if (employeeModel.hasEnoughParams) {
       this.employeeService
-        .createEmployee(employee)
+        .createEmployee(employeeModel)
         .then((data) => {
-          const responseMess: IResponseMessage = { res, data: this.convertToDataFE(data), message: 'Create new employee' };
+          const employeeDto = employeeMapper.map(data._doc, EmployeeDTO, EmployeeModel);
+          const responseMess: IResponseMessage = { 
+            res, 
+            data: employeeDto, 
+            message: 'Create new employee' 
+          };
+          console.log(employeeDto);
           this.responseMessageService.successReponse(responseMess);
         })
         .catch((err) => {
@@ -60,32 +70,34 @@ export class EmployeesController {
       description: 'Update employee',
     };
 
-    if (req.params.id && utilities.hasEnoughParams<Employee>(req.body, this.getPropertiesForCreating())) {
-      const data = req.body as Employee;
-      const employee: Employee = new Employee(data);
-      
-      employee._id = req.params.id;
-      delete employee.password;
+    const employeeModel = employeeMapper.map(req.body, EmployeeModel, EmployeeDTO);
+    if (req.params.id && employeeModel.hasEnoughParams) {
+      employeeModel._id = req.params.id;
 
-      this.employeeService
-        .filterEmployee({ _id: employee._id }, 'modificationNote')
+      const hasEmployee = await this.findEmployeeById(employeeModel._id)
         .catch((err) => this.responseMessageService.mongoError({ res, err } as IResponseMessage))
         .then((dataFiltered) => {
-          if ((dataFiltered as Employee) && dataFiltered.modificationNote) {
-            employee.modificationNote = [...dataFiltered.modificationNote, modificationNote];
-            this.employeeService
-              .updateEmployee(employee as Employee)
-              .catch((err) => this.responseMessageService.mongoError({ res, err }))
-              .then((data) => {
-                const responseMess: IResponseMessage = {
-                  res,
-                  data: this.convertToDataFE(data),
-                  message: `Update employee: ${employee._id}`,
-                };
-                this.responseMessageService.successReponse(responseMess);
-              });
+          if (dataFiltered?.modificationNote?.length) {
+            employeeModel.modificationNote = [...dataFiltered.modificationNote, modificationNote];
+            return true;
           }
-        });
+          return false;
+        })
+
+      if (hasEmployee) {
+        this.employeeService
+          .updateEmployee(employeeModel as EmployeeModel)
+          .catch((err) => this.responseMessageService.mongoError({ res, err }))
+          .then((data) => {
+            const employeeDto = employeeMapper.map(data._doc, EmployeeDTO, EmployeeModel);
+            const responseMess: IResponseMessage = {
+              res,
+              data: employeeDto,
+              message: `Update employee: ${employeeModel._id}`,
+            };
+            this.responseMessageService.successReponse(responseMess);
+          });
+      }
     } else {
       this.responseMessageService.insufficientParams({ res } as IResponseMessage);
     }
@@ -97,7 +109,11 @@ export class EmployeesController {
       .getEmployees(params)
       .catch((err) => this.responseMessageService.mongoError({ res, err } as IResponseMessage))
       .then((data) => {
-        const responseMess: IResponseMessage = { res, data: this.convertToDataFE(data), message: 'Get employees' };
+        const employeeDto = employeeMapper.map(data._doc, EmployeeDTO, EmployeeModel);
+        const responseMess: IResponseMessage = { 
+          res, 
+          data: employeeDto, 
+          message: 'Get employees' };
         this.responseMessageService.successReponse(responseMess);
       });
   }
@@ -116,7 +132,11 @@ export class EmployeesController {
             )
             .then((data) => {
               const meta = { totalCount: length };
-              const responseMess: IResponseMessage = { res, data: this.convertToDataFE(data), meta, message: 'Get employees' };
+              const responseMess: IResponseMessage = { 
+                res, 
+                // data: this.convertToDataFE(data), 
+                meta, 
+                message: 'Get employees' };
               this.responseMessageService.successReponse(responseMess);
             });
         }
@@ -124,22 +144,30 @@ export class EmployeesController {
   }
 
   async deleteEmployee(req: Request, res: Response) {
-    if (req.params.id) {
+    if (req?.params?.id) {
       this.employeeService
         .deleteEmployee(req.params.id)
         .catch((err) => this.responseMessageService.mongoError({ res, err } as IResponseMessage))
-        .then((data) => {
-          console.log(data);
+        .then((_) => {
           const responseMess: IResponseMessage = {
             res,
-            data: this.convertToDataFE(data),
-            message: `Delete employee: ${req.params.id}`,
+            data: null,
+            message: `Deleted employee: ${req.params.id}`,
           };
           this.responseMessageService.successReponse(responseMess);
         });
     } else {
       this.responseMessageService.insufficientParams({ res } as IResponseMessage);
     }
+  }
+
+  async findEmployeeById(_id: string): Promise<any> {
+    return this.employeeService
+      .filterEmployee({ _id })
+      .catch((err) => err)
+      .then((dataFiltered) => {
+        return dataFiltered
+      })
   }
 
   protected createFilterParams(req: Request) {
@@ -156,21 +184,5 @@ export class EmployeesController {
     }
 
     return query;
-  }
-
-  protected getPropertiesForCreating(): string[] {
-    return ['firstName', 'lastName','dob', 'age',  'email', 'phone', 'gender', 'department', 'position', 'addressInfo', 'idCardInfo'];
-  }
-
-  protected propertiesForUpdating(): string[] {
-    return ['firstName', 'lastName','dob', 'age', 'email', 'phone', 'gender'];
-  }
-
-  protected convertToDataFE(data: any): EmployeeDTO | EmployeeDTO[] {
-    if (data && (Array.isArray(data) || data.length)) {
-      return data.map(d => new EmployeeDTO(d));
-    }
-
-    return new EmployeeDTO(data)
   }
 }

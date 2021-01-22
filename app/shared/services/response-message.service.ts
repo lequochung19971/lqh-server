@@ -10,11 +10,6 @@ export class ResponseMessageService {
   }
 
   successReponse({res, message, data, meta}: IResponseMessage) {
-    // this.logger.LOG({
-    //   STATUS: 'SUCCESS',
-    //   MESSAGE: message,
-    //   DATA: data
-    // })
     res.status(ResponseStatus.SUCCESS).json({
       STATUS: 'SUCCESS',
       MESSAGE: message,
