@@ -1,25 +1,28 @@
-import { connect } from "mongoose";
-import { mongoDBConfig } from '../shared/config/mongodb.config';
-import env from '../environment';
-
+import { connect, ConnectionOptions } from "mongoose";
+import env from '../providers/config/ts/environment'
+import { SERVER_CONFIG } from "../providers/config/ts/server-config";
 export class Mongoose {
-  protected url: string = mongoDBConfig.url;
+  protected uri: string = SERVER_CONFIG.DATABASE.URI;
 
   constructor() {}
 
   mongoSetup(): void {
-    console.log(this.getMongoDBUrl());
-    connect(this.getMongoDBUrl(), { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }, (err) => {
+    console.log(this.mongoDBUri);
+    connect(this.mongoDBUri, this.mongoDBOption, (err) => {
       if (err) {
         console.log(err); 
       } else {
-        console.log('connected to DB!')
+        console.log('Connected to DB!')
       }
     })
   }
 
-  getMongoDBUrl(): string {
-    const url = this.url.replace('<dbname>', env.databaseName)
-    return url;
+  get mongoDBUri(): string {
+    const uri = process.env.MONGODB_URI || this.uri.replace('<dbname>', env.DB_NAME)
+    return uri;
+  }
+
+  get mongoDBOption(): ConnectionOptions {
+    return { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
   }
 }

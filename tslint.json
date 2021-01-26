@@ -1,0 +1,15 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended",
+        "tslint:latest",
+        "tslint-config-prettier",
+        "tslint-eslint-rules"
+    ],
+    "jsRules": {},
+    "rules": {
+      "no-console": false,
+      "no-trailing-whitespace": false
+		},
+    "rulesDirectory": []
+}

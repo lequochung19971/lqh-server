@@ -5,8 +5,9 @@ import { DepartmentDTO } from './department-dto.model';
 import { PositionDTO } from './position-dto.model';
 import { IDCardDTO } from './id-card-dto.model';
 import { AutoMap } from '@automapper/classes';
+import { IEmployee } from '../interface/employee.interface';
 
-export class EmployeeDTO extends BaseDTO {
+export class EmployeeDTO extends BaseDTO implements IEmployee {
   @AutoMap()
   _id: string;
   
@@ -44,7 +45,7 @@ export class EmployeeDTO extends BaseDTO {
   idCardInfo: IDCardDTO;
   
   @AutoMap()
-  password?: string;
+  password: string;
   
-  avatar?: string;
+  avatar: string;
 }

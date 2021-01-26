@@ -1,17 +1,20 @@
-import { IModificationNote } from '../interface/modification-note.interface';
-
 export class BaseModel {
   propertyKeys: string[];
+
+  constructor(props?: any) {
+    if (props) {
+      this.mappingProperties(props);
+    }
+  }
 
   public mappingProperties?(props: any) {
     Object.assign(this, props);
   }
   
   get hasEnoughParams(): boolean {
-    const data = this;
-    const requiredParams = this.constructor['propertyKeys']
-    if (!requiredParams?.length || !data) { return false; }
+    const requiredParams = (this.constructor as unknown as BaseModel).propertyKeys;
+    if (!requiredParams?.length) { return false; }
 
-    return requiredParams.every(param => data[param]);
+    return requiredParams.every((param: string) => this[param]);
   }
 }

@@ -1,5 +1,5 @@
 export interface IModificationNote {
   modifiedOn: Date;
-  modifiedBy?: string;
+  modifiedBy?: string | null | undefined;
   description?: string;
 }

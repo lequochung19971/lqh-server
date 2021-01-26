@@ -18,4 +18,3 @@ export const employeeMapperProfile = (mapper: Mapper) => {
     .createMap(EmployeeModel, EmployeeDTO)
     .forMember((d) => d.password, ignore());
 };
-  

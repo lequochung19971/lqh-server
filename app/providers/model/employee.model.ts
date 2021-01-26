@@ -8,10 +8,9 @@ import { AutoMap } from '@automapper/classes';
 import { IModificationNote } from '../interface/modification-note.interface';
 import { RequiredParams } from '../../shared/services/utilities.service';
 import { IPasswordHashing } from '../interface/password-hashing.interface';
+import { IEmployee } from '../interface/employee.interface';
 
-export class EmployeeModel extends BaseModel {
-  modificationNote?: IModificationNote[];
-  
+export class EmployeeModel extends BaseModel implements IEmployee {
   @AutoMap()
   _id: string;
 
@@ -22,11 +21,11 @@ export class EmployeeModel extends BaseModel {
   @RequiredParams()
   @AutoMap()
   lastName: string;
-  
+
   @RequiredParams()
   @AutoMap()
   dob: string;
-  
+
   @RequiredParams()
   @AutoMap()
   age: string;
@@ -61,4 +60,11 @@ export class EmployeeModel extends BaseModel {
 
   @AutoMap()
   password: IPasswordHashing
+
+  modificationNote: IModificationNote[];
+
+
+  constructor(props?: any) {
+    super(props);
+  }
 }

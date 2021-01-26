@@ -1,33 +1,36 @@
-import employeesSchema from './employees.schema';
+import employee, { IEmployeeDocument } from './employees.schema';
 import { EmployeeModel } from '../../providers/model/employee.model';
 export class EmployeesSerivce {
-  async createEmployee(query: EmployeeModel): Promise<any> {
-    const model = new employeesSchema(query);
+  async saveEmployee(query: EmployeeModel): Promise<IEmployeeDocument> {
+    const model = new employee(query);
     return model.save();
   }
 
-  async updateEmployee(params: EmployeeModel): Promise<any> {
+  async updateEmployee(params: EmployeeModel): Promise<IEmployeeDocument> {
     const query = { _id: params._id };
     const options = { new: true, upsert: true, overwrite: false };
-    return employeesSchema.findOneAndUpdate(query, params, options).exec();
+    return employee.findOneAndUpdate(query, params, options);
   }
 
-  async getEmployees(query: any): Promise<any> {
-    return employeesSchema.find({}, null, query).exec();
+  async findEmployees(query: any): Promise<IEmployeeDocument[]> {
+    return employee.find({}, null, query);
   }
 
-  async filterEmployee(condition: any, fields?: string | string[] | any): Promise<any> {
-    return employeesSchema.findOne(condition, fields).exec();
+  async findEmployee(condition: any, fields?: string | string[] | any): Promise<IEmployeeDocument> {
+    return employee.findOne(condition, fields);
   }
 
-  async deleteEmployee(_id: string): Promise<any> {
-    const query = { _id };
-    employeesSchema.deleteOne(query).exec();
+  async findEmployeeById(_id: string): Promise<IEmployeeDocument> {
+    return employee.findById(_id);
   }
 
-  async countEmployees(query?: any): Promise<any> {
+  async deleteEmployeeById(_id: string): Promise<any> {
+    employee.findByIdAndDelete(_id);
+  }
+
+  async countEmployees(query?: any): Promise<number> {
     return new Promise((resolve, rejects) => {
-      employeesSchema.estimatedDocumentCount(query, (err, data) => {
+      employee.estimatedDocumentCount(query, (err, data) => {
         if (err) {
           rejects(err);
         } else {

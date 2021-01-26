@@ -11,8 +11,8 @@ export function hasEnoughParams<T>(data: T | any, requiredParams: string[]): boo
 }
 
 export function RequiredParams() {
-  return function (target: any, propertyKey: string) {
+  return (target: any, propertyKey: string) => {
     target.constructor.propertyKeys = target.constructor.propertyKeys ?? [];
-    target.constructor.propertyKeys.push(propertyKey)
+    target.constructor.propertyKeys.push(propertyKey);
   }
 }

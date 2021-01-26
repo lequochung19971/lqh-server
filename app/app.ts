@@ -2,10 +2,13 @@ import { Mongoose } from './model/mongoose';
 import { json, urlencoded } from 'body-parser';
 import { EmployeesRoutes } from './routes/employees.route';
 import { CommonRoutes } from './routes/common.route';
-import express from 'express';
-
+import passport from 'passport';
+import express, { Application } from 'express';
+import morgan from 'morgan';
+import cors from 'cors';
+import passportStrategyConfig from './middlewares/passport.middleware'
 class App {
-  private app: express.Application;
+  private _app: Application;
 
   protected commonRoutes: CommonRoutes;
   protected employeeRoutes: EmployeesRoutes;
@@ -13,19 +16,23 @@ class App {
   constructor() {
     this.commonRoutes = new CommonRoutes();
     this.employeeRoutes = new EmployeesRoutes();
-    this.app = express();
+    this._app = express();
     this.configApp();
     this.configMongoose();
     this.configRoutes();
   }
 
-  getApp(): express.Application {
-    return this.app;
+  get app(): Application {
+    return this._app;
   }
 
   protected configApp(): void {
-    this.app.use(json());
-    this.app.use(urlencoded({ extended: false }));
+    this._app.use(json());
+    this._app.use(urlencoded({ extended: false }));
+    this._app.use(cors());
+    this._app.use(passport.initialize());
+    this._app.use(morgan('dev'))
+    passport.use(passportStrategyConfig)
   }
 
   protected configRoutes(): void {
@@ -34,11 +41,11 @@ class App {
   }
 
   protected configCommonRoutes(): void {
-    this.commonRoutes.route(this.app);
+    this.commonRoutes.route(this._app);
   }
 
   protected configEmployeeRoutes(): void {
-    this.employeeRoutes.route(this.app);
+    this.employeeRoutes.route(this._app);
   }
 
   protected configMongoose(): void {
@@ -47,4 +54,4 @@ class App {
   }
 }
 
-export default new App().getApp();
+export default new App().app;

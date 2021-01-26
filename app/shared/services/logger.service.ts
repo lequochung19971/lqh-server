@@ -1,10 +1,8 @@
 import { LoggerLevel } from '../../providers/enum/logger-level.enum';
-import env from '../../environment';
+import env from '../../providers/config/ts/environment';
 
 export class LoggerService {
   production: boolean = false;
-
-  constructor() { }
 
   LOG(message: any): void {
     this.log(message, LoggerLevel.LOG);
@@ -27,7 +25,7 @@ export class LoggerService {
   }
 
   private log(message: any, level = LoggerLevel.LOG) {
-    if (!env.production) {
+    if (!env.PRODUCTION) {
       switch (level) {
         case LoggerLevel.LOG:
           console.log(message);

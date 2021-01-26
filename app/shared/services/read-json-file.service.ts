@@ -12,7 +12,7 @@ export class ReadJsonFile {
     return JSON.parse(fs.readFileSync(this.url, 'utf8')) as T;
   }
 
-  readJsonFileAsync<T>(file: string, callback): void {
+  readJsonFileAsync<T>(file: string, callback: (arg: T) => void): void {
     // const url = `config/${file}`;
     fs.readFile(this.url, 'uft8', (err, data) => {
       if (err) throw err;

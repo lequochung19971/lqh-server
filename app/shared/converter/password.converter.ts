@@ -6,6 +6,10 @@ const passwordHasherService = new PasswordHasherService();
 
 export const passwordConverted: Converter<string, IPasswordHashing> = {
   convert(password: string): IPasswordHashing {
+    if (!password) {
+      return;
+    }
+
     return passwordHasherService.createNewHashingPassword(password);
   }
 }
