@@ -1,14 +1,16 @@
-import { EmployeesController } from "../controllers/employees/employees.controller";
+import { EmployeeController } from "../controllers/employee/employee.controller";
 import { Application, Request, Response } from "express";
 import passport from 'passport';
 import { checkDuplicateEmail } from "../shared/validators/check-dulicate-email.validator";
+import { BaseRoutes } from "./base.route";
 
 
-export class EmployeesRoutes {
-  protected employeesController: EmployeesController;
+export class EmployeeRoutes extends BaseRoutes {
+  protected EmployeeController: EmployeeController;
   
   constructor() {
-    this.employeesController = new EmployeesController();
+    super();
+    this.EmployeeController = new EmployeeController();
   }
 
   public route(app: Application) {
@@ -19,17 +21,9 @@ export class EmployeesRoutes {
         passport.authenticate('jwt', { session: false })
       ],
       async (req: Request, res: Response) => {
-        this.employeesController.createEmployee(req, res);
+        this.EmployeeController.createEmployee(req, res);
       }
     );
-
-    app.post('/auth/login', async (req: Request, res: Response) => {
-      this.employeesController.login(req, res);
-    });
-
-    app.post('/auth/refresh', async (req: Request, res: Response) => {
-      this.employeesController.doRefreshToken(req, res);
-    });
 
     app.get(
       '/employees/:id',
@@ -43,20 +37,16 @@ export class EmployeesRoutes {
       '/employees/:id', 
       [passport.authenticate('jwt', { session: false })],
       (req: Request, res: Response) => {
-        this.employeesController.updateEmployee(req, res);
+        this.EmployeeController.updateEmployee(req, res);
       }
     );
 
     app.delete('/employees/:id', (req: Request, res: Response) => {
-      this.employeesController.deleteEmployeeById(req, res);
+      this.EmployeeController.deleteEmployeeById(req, res);
     });
 
     app.get('/employees', (req: Request, res: Response) => {
-      this.employeesController.getFilteredEmployees(req, res);
-    });
-
-    app.get('/test', [passport.authenticate('jwt', { session: false })], (req: Request, res: Response) => {
-      res.status(200).json({msg: 'OK'});
+      this.EmployeeController.getFilteredEmployees(req, res);
     });
   }
 }

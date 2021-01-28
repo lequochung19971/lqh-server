@@ -2,9 +2,7 @@ import { connect, ConnectionOptions } from "mongoose";
 import env from '../providers/config/ts/environment'
 import { SERVER_CONFIG } from "../providers/config/ts/server-config";
 export class Mongoose {
-  protected uri: string = SERVER_CONFIG.DATABASE.URI;
-
-  constructor() {}
+  protected uri: string = SERVER_CONFIG.DATABASE.LOCAL_URI;
 
   mongoSetup(): void {
     console.log(this.mongoDBUri);

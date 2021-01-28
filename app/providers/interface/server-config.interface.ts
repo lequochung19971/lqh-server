@@ -4,7 +4,8 @@ export interface ServerConfig {
 }
 
 export interface DataBaseConfig {
-  URI: string;
+  ATLAS_URI: string;
+  LOCAL_URI: string;
 }
 
 export interface JsonWebTokenConfig {

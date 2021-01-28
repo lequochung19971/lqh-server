@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { ResponseMessageService } from '../services/response-message.service';
-import { EmployeesSerivce } from '../../model/employees/employees.service';
+import { EmployeeSerivce } from '../../model/employee/employee.service';
 
 const responseMessageService = new ResponseMessageService();
-const employeesSerivce = new EmployeesSerivce();
+const employeeSerivce = new EmployeeSerivce();
 
 export const checkDuplicateEmail = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const employee = await employeesSerivce.findEmployee({email: req.body.email});
+    const employee = await employeeSerivce.findEmployee({email: req.body.email});
     if (employee) {
       return responseMessageService.failureResponse({
         res,

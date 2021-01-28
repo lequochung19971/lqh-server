@@ -1,25 +1,39 @@
 import { Mongoose } from './model/mongoose';
 import { json, urlencoded } from 'body-parser';
-import { EmployeesRoutes } from './routes/employees.route';
+import { EmployeeRoutes } from './routes/employee.route';
 import { CommonRoutes } from './routes/common.route';
 import passport from 'passport';
 import express, { Application } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import passportStrategyConfig from './middlewares/passport.middleware'
+import { AuthRoutes } from './routes/auth.route';
 class App {
   private _app: Application;
 
   protected commonRoutes: CommonRoutes;
-  protected employeeRoutes: EmployeesRoutes;
+  protected employeeRoutes: EmployeeRoutes;
+  protected authRoutes: AuthRoutes;
+  protected mongoose: Mongoose;
+
 
   constructor() {
-    this.commonRoutes = new CommonRoutes();
-    this.employeeRoutes = new EmployeesRoutes();
     this._app = express();
+    this.initRouter();
+    this.initMongoose();
     this.configApp();
     this.configMongoose();
     this.configRoutes();
+  }
+
+  protected initRouter(): void {
+    this.commonRoutes = new CommonRoutes();
+    this.employeeRoutes = new EmployeeRoutes();
+    this.authRoutes = new AuthRoutes();
+  }
+
+  protected initMongoose(): void {
+    this.mongoose = new Mongoose();
   }
 
   get app(): Application {
@@ -31,26 +45,18 @@ class App {
     this._app.use(urlencoded({ extended: false }));
     this._app.use(cors());
     this._app.use(passport.initialize());
-    this._app.use(morgan('dev'))
-    passport.use(passportStrategyConfig)
+    passport.use(passportStrategyConfig);
+    this._app.use(morgan('dev'));
   }
 
   protected configRoutes(): void {
-    this.configCommonRoutes();
-    this.configEmployeeRoutes();
-  }
-
-  protected configCommonRoutes(): void {
     this.commonRoutes.route(this._app);
-  }
-
-  protected configEmployeeRoutes(): void {
     this.employeeRoutes.route(this._app);
+    this.authRoutes.route(this._app);
   }
 
   protected configMongoose(): void {
-    const mongo = new Mongoose();
-    mongo.mongoSetup();
+    this.mongoose.mongoSetup();
   }
 }
 
