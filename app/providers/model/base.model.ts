@@ -11,7 +11,7 @@ export class BaseModel {
     Object.assign(this, props);
   }
   
-  get hasEnoughParams(): boolean {
+  hasEnoughParams?(): boolean {
     const requiredParams = (this.constructor as unknown as BaseModel).propertyKeys;
     if (!requiredParams?.length) { return false; }
 

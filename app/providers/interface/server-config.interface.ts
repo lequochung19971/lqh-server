@@ -1,6 +1,7 @@
 export interface ServerConfig {
   DATABASE: DataBaseConfig,
   JWT: JsonWebTokenConfig,
+  UPLOADS_FOLDER_URL: string
 }
 
 export interface DataBaseConfig {

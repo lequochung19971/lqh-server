@@ -1,9 +1,7 @@
 import { ExtractJwt, Strategy, StrategyOptions } from "passport-jwt";
 import { SERVER_CONFIG } from '../providers/config/ts/server-config';
 import { EmployeeSerivce } from '../model/employee/employee.service';
-import { ResponseMessageService } from '../shared/services/response-message.service';
 
-const responseMessageService = new ResponseMessageService();
 const opts: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: SERVER_CONFIG.JWT.SECRET_KEY,

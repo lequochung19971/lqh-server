@@ -1,8 +1,9 @@
-import { EmployeeController } from "../controllers/employee/employee.controller";
+import { EmployeeController } from "../../controllers";
 import { Application, Request, Response } from "express";
 import passport from 'passport';
-import { checkDuplicateEmail } from "../shared/validators/check-dulicate-email.validator";
-import { BaseRoutes } from "./base.route";
+import { checkDuplicateEmail } from "../../shared/validators/check-dulicate-email.validator";
+import { BaseRoutes } from "../base.route";
+import { upload } from '../../middlewares/multer.middleware';
 
 
 export class EmployeeRoutes extends BaseRoutes {
@@ -18,7 +19,8 @@ export class EmployeeRoutes extends BaseRoutes {
       '/employees',
       [
         checkDuplicateEmail, 
-        passport.authenticate('jwt', { session: false })
+        passport.authenticate('jwt', { session: false }),
+        upload.single('image')
       ],
       async (req: Request, res: Response) => {
         this.EmployeeController.createEmployee(req, res);

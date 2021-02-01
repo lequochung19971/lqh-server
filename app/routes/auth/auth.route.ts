@@ -1,6 +1,6 @@
 import { Application, Request, Response } from "express";
-import { BaseRoutes } from "./base.route";
-import { AuthController } from "../controllers/auth/auth.controller";
+import { BaseRoutes } from "../base.route";
+import { AuthController } from "../../controllers/auth/auth.controller";
 
 
 export class AuthRoutes extends BaseRoutes {
@@ -20,7 +20,7 @@ export class AuthRoutes extends BaseRoutes {
     });
 
     app.post('/auth/logout', async (req: Request, res: Response) => {
-      this.authController.login(req, res);
+      this.authController.logout(req, res);
     });
   }
 }

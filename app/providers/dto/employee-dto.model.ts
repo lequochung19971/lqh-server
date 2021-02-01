@@ -47,5 +47,6 @@ export class EmployeeDTO extends BaseDTO implements IEmployee {
   @AutoMap()
   password: string;
   
+  @AutoMap()
   avatar: string;
 }

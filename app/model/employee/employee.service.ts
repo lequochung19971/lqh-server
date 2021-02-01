@@ -25,7 +25,7 @@ export class EmployeeSerivce {
   }
 
   async deleteEmployeeById(_id: string): Promise<any> {
-    employee.findByIdAndDelete(_id);
+    return employee.findByIdAndDelete(_id);
   }
 
   async countEmployees(query?: any): Promise<number> {

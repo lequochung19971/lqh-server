@@ -1,21 +1,21 @@
 import { Request, Response } from 'express';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
-import { BaseController } from '../base.controller';
 import { EmployeeSerivce } from '../../model/employee/employee.service';
 import { Tokens } from '../../providers/interface/tokens.interface';
-import { RefreshTokenService } from '../../model/auth/refresh-token.service';
+import { AuthService } from '../../model/auth/auth.service';
 import { IEmployeeDocument } from '../../model/employee/employee.schema';
 import { SERVER_CONFIG } from '../../providers/config/ts/server-config';
+import { BaseController } from '../base.controller';
 
 export class AuthController extends BaseController {
   protected employeeService: EmployeeSerivce;
-  protected refreshTokenService: RefreshTokenService;
+  protected authService: AuthService;
 
   constructor() {
     super();
     this.employeeService = new EmployeeSerivce();
-    this.refreshTokenService = new RefreshTokenService();
+    this.authService = new AuthService();
   }
   
   async login(req: Request, res: Response) {
@@ -42,7 +42,7 @@ export class AuthController extends BaseController {
         refreshToken: crypto.randomBytes(256).toString('hex')
       };
 
-      this.refreshTokenService.saveRefreshToken({email: employee.email, token: tokens.refreshToken});
+      this.authService.saveRefreshToken({email: employee.email, token: tokens.refreshToken});
       
       return res.status(200).json(tokens);
     }
@@ -70,7 +70,7 @@ export class AuthController extends BaseController {
     }
 
     try {
-      const currentRefreshToken = await this.refreshTokenService.findCurrentRefreshToken(refreshToken);
+      const currentRefreshToken = await this.authService.findCurrentRefreshToken(refreshToken);
       const employee = await this.employeeService.findEmployee({email: currentRefreshToken.email});
 
       const tokens: Tokens = {
@@ -83,5 +83,23 @@ export class AuthController extends BaseController {
       return this.responseMessageService.mongoError({res});
     }
 
+  }
+
+  async logout(req: Request, res: Response) {
+    const refreshToken = req.body.refreshToken;
+
+    if (!refreshToken) {
+      return this.responseMessageService.insufficientParams({res});
+    }
+
+    try {
+      await this.authService.deleteRefreshToken(refreshToken);
+      return this.responseMessageService.successReponse({
+        res,
+        message: 'Successfully logged out.'
+      });
+    } catch (err) {
+      return this.responseMessageService.mongoError({res});
+    }
   }
 }

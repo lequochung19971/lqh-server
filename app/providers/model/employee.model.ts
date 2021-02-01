@@ -61,6 +61,9 @@ export class EmployeeModel extends BaseModel implements IEmployee {
   @AutoMap()
   password: IPasswordHashing
 
+  @AutoMap()
+  avatar: string;
+
   modificationNote: IModificationNote[];
 
 

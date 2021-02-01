@@ -1,20 +1,19 @@
 import { Mongoose } from './model/mongoose';
 import { json, urlencoded } from 'body-parser';
-import { EmployeeRoutes } from './routes/employee.route';
-import { CommonRoutes } from './routes/common.route';
 import passport from 'passport';
 import express, { Application } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import passportStrategyConfig from './middlewares/passport.middleware'
-import { AuthRoutes } from './routes/auth.route';
+import { AuthRoutes, EmployeeRoutes, UploadFileRoutes } from './routes';
+import { SERVER_CONFIG } from './providers/config/ts/server-config';
 class App {
   private _app: Application;
 
-  protected commonRoutes: CommonRoutes;
   protected employeeRoutes: EmployeeRoutes;
   protected authRoutes: AuthRoutes;
   protected mongoose: Mongoose;
+  protected uploadFileRoutes: UploadFileRoutes;
 
 
   constructor() {
@@ -27,9 +26,9 @@ class App {
   }
 
   protected initRouter(): void {
-    this.commonRoutes = new CommonRoutes();
     this.employeeRoutes = new EmployeeRoutes();
     this.authRoutes = new AuthRoutes();
+    this.uploadFileRoutes = new UploadFileRoutes()
   }
 
   protected initMongoose(): void {
@@ -47,12 +46,13 @@ class App {
     this._app.use(passport.initialize());
     passport.use(passportStrategyConfig);
     this._app.use(morgan('dev'));
+    this._app.use(express.static(SERVER_CONFIG.UPLOADS_FOLDER_URL));
   }
 
   protected configRoutes(): void {
-    this.commonRoutes.route(this._app);
     this.employeeRoutes.route(this._app);
     this.authRoutes.route(this._app);
+    this.uploadFileRoutes.route(this._app);
   }
 
   protected configMongoose(): void {
